@@ -1,6 +1,7 @@
 from domain.event import Event
 from domain.unsupported_event import UnsupportedEvent
 
+import inspect
 from typing import List,Type
 
 class EventListener:
@@ -30,7 +31,10 @@ class EventListener:
     def find_listeners(cls):
         for subclass in EventListener.__subclasses__():
             for eventClass in subclass.supported_events():
-                EventListener.listen(subclass, eventClass)
+                methodName = cls.buildMethodName(eventClass)
+                method = getattr(subclass, methodName)
+                if inspect.ismethod(method) and inspect.isclass(method.__self__):
+                    EventListener.listen(subclass, eventClass)
 
     @classmethod
     def listen(cls, listener: Type, eventClass: Type[Event]):
@@ -38,13 +42,20 @@ class EventListener:
         if listener not in eventListeners:
             eventListeners.append(listener)
 
-    async def accept(self, event: Event):
+    @classmethod
+    async def accept(cls, event: Event):
         result = []
         listeners = EventListener.listeners_for(event.__class__)
         if len(listeners) == 0:
             raise UnsupportedEvent(event)
         for listener in listeners:
-            methodName = f'listen{event.__class__.__name__}'
+            methodName = cls.buildMethodName(event.__class__)
             method = getattr(listener, methodName)
+            print(f'Calling {method}({event}) of {listener}')
             result.append(await method(event))
         return result
+
+
+    @classmethod
+    def buildMethodName(cls, eventClass: Type) -> str:
+        return f'listen{eventClass.__name__}'

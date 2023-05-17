@@ -15,6 +15,7 @@ class GitRepoFoundCli(PrimaryPort):
 
     async def accept(self, app):
 
+        print(f'In GitRepoFoundCli#accept()')
         parser = argparse.ArgumentParser(
             description="Sends the git repository for a given Python package"
         )
@@ -22,9 +23,13 @@ class GitRepoFoundCli(PrimaryPort):
         parser.add_argument("packageName", help="The name of the Python package")
         parser.add_argument("packageVersion", help="The version of the Python package")
         parser.add_argument("url", help="The url of the git repository")
+        parser.add_argument("tag", help="The tag for the package version in the git repository")
+        parser.add_argument("-s", "--server_url", required=True, help="The server url")
         args, unknown_args = parser.parse_known_args()
 
+        logging.getLogger(__name__).info(f"type? {args.type}")
         if args.type == "git_repo_found":
-            event = GitRepoFound(args.packageName, args.packageVersion, args.url)
-            logging.getLogger(__name__).debug(f"Notifying the url of the git repository of {event.package_name}-{event.package_version} is {args.url}")
+            event = GitRepoFound(args.packageName, args.packageVersion, args.url, args.tag)
+            print(f"Notifying the url of the git repository of {event.package_name}-{event.package_version} is {args.url}, under tag {args.tag}")
+            logging.getLogger(__name__).debug(f"Notifying the url of the git repository of {event.package_name}-{event.package_version} is {args.url}, under tag {args.tag}")
             await app.accept(event)

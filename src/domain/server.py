@@ -1,6 +1,7 @@
 from domain.git_repo_found import GitRepoFound
+from domain.port import Port
 
-class Server():
+class Server(Port):
 
     def accept(self, event: GitRepoFound):
         """

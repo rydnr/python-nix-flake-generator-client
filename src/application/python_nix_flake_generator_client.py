@@ -60,7 +60,7 @@ class PythonNixFlakeGeneratorClient():
             firstEvents = []
             logging.getLogger(__name__).info(f'Accepting event {event}')
             for listenerClass in EventListener.listeners_for(event.__class__):
-                resultingEvents = await listenerClass.accept(listenerClass, event)
+                resultingEvents = await listenerClass.accept(event)
                 if resultingEvents and len(resultingEvents) > 0:
                     firstEvents.extend(resultingEvents)
             if len(firstEvents) > 0:
@@ -87,6 +87,9 @@ class PythonNixFlakeGeneratorClient():
             print(f"Error in src/infrastructure/_log_config.py: configure_logging")
         return result
 
+    async def accept_server_url(self, url: str):
+        Client.server_url(url)
+
 if __name__ == "__main__":
 
     from domain.event import Event
@@ -95,6 +98,7 @@ if __name__ == "__main__":
     from domain.ports import Ports
     from domain.primary_port import PrimaryPort
     from infrastructure._log_config import configure_logging
+    from infrastructure.network.grpc.client import Client
 
     PythonNixFlakeGeneratorClient.initialize()
-    PythonNixFlakeGeneratorClient.instance().accept_input()
+    asyncio.run(PythonNixFlakeGeneratorClient.instance().accept_input())
