@@ -1,0 +1,1 @@
+../../../.generator/src/infrastructure/cli/logging_config_cli.py

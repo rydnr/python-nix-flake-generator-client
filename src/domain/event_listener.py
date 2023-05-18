@@ -51,7 +51,6 @@ class EventListener:
         for listener in listeners:
             methodName = cls.buildMethodName(event.__class__)
             method = getattr(listener, methodName)
-            print(f'Calling {method}({event}) of {listener}')
             result.append(await method(event))
         return result
 
