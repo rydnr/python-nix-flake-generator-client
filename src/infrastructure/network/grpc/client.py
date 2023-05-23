@@ -1,4 +1,4 @@
-from domain.event import Event
+from domain.git.git_repo_found import GitRepoFound
 from domain.server import Server
 
 import infrastructure.network.grpc.git_repo_found_pb2 as git_repo_found_pb2
@@ -14,7 +14,7 @@ class Client(Server):
     def server_url(cls, url: str):
         cls._server_url = url
 
-    async def accept(self, event: Event):
+    async def acceptGitRepoFound(self, event: GitRepoFound):
         """
         Sends the event to the remote gRPC server.
         """
@@ -25,7 +25,7 @@ class Client(Server):
             stub = git_repo_found_pb2_grpc.GitRepoFoundServiceStub(channel)
 
             # Create a GitRepoFound message
-            git_repo_found = git_repo_found_pb2.GitRepoFound(package_name=event.package_name, package_version=event.package_version, url=event.url, tag=event.tag)
+            git_repo_found = git_repo_found_pb2.GitRepoFound(package_name=event.package_name, package_version=event.package_version, url=event.url, tag=event.tag, metadata=event.metadata, subfolder=event.subfolder)
 
             # Use the stub to notify of GitRepoFound events
             response = stub.GitRepoFoundNotifications(git_repo_found)

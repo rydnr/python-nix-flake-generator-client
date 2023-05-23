@@ -1,6 +1,6 @@
-from domain.git_repo_found import GitRepoFound
 from domain.event import Event
 from domain.event_listener import EventListener
+from domain.git.git_repo_found import GitRepoFound
 from domain.ports import Ports
 from domain.server import Server
 
@@ -21,4 +21,4 @@ class Client(EventListener):
     def listenGitRepoFound(cls, event: GitRepoFound):
 
         server = Ports.instance().resolve(Server)
-        return server.accept(event)
+        return server.acceptGitRepoFound(event)

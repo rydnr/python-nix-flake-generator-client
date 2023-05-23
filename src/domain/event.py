@@ -1,4 +1,1 @@
-class Event:
-    """
-    The base event class.
-    """
+../../.generator/src/domain/event.py

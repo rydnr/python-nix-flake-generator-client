@@ -1,2 +1,1 @@
-class Port:
-    pass
+../../.generator/src/domain/port.py
